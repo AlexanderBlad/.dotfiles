@@ -2,7 +2,7 @@ set nocompatible              " required
 filetype off                  " required
 " Will install vim-plug if not already installed 
 if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
@@ -11,11 +11,15 @@ endif
 call plug#begin('~/.vim/plugged')
 " Here all plug goes
 
-" Autocompletion plugin
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'davidhalter/jedi-vim'
+
+" For using vim with conda, especially jedi
+Plug 'cjrh/vim-conda'
 
 " Better and faster folding
 Plug 'tmhedberg/SimpylFold'
+
+Plug 'tell-k/vim-autopep8'
 
 " Folding according to PEP8
 Plug 'vim-scripts/indentpython.vim'
@@ -41,6 +45,9 @@ Plug 'airblade/vim-gitgutter'
 " Syntax highlighting
 Plug 'sheerun/vim-polyglot'
 
+" Status/tabline
+Plug 'vim-airline/vim-airline'
+
 call plug#end()
 
 "       
@@ -57,11 +64,11 @@ inoremap <leader>4 {<esc>o}<esc>o
 inoremap <leader>q ''<esc>i
 inoremap <leader>e ""<esc>i
 inoremap <leader>t <><esc>i
+inoremap <leader><Tab> <esc>wwi
 
 "
 "       settings
 "
-set number 
 syntax on
 set hidden
 let mapleader = "," 
@@ -70,7 +77,7 @@ filetype indent on
 set nowrap        " don't wrap lines
 set backspace=indent,eol,start " allow backspacing over everything in insert mode
 set copyindent    " copy the previous indentation on autoindenting
-set number        " always show line numbers
+set number relativenumber " always show line numbers
 set shiftround    " use multiple of shiftwidth when indenting with '<' and '>'
 set showmatch     " set show matching parenthesis
 set ignorecase    " ignore case when searching
@@ -104,13 +111,12 @@ syntax on
 colorscheme onedark
 
 " Run python for errors in editor
-"hi Normal guibg=NONE ctermbg=NONE
 nnoremap <buffer> <F9> :exec '!ipython' shellescape(@%, 1)<cr>
+autocmd FileType python noremap <buffer> <F10> :call Autopep8()<CR>
+map <F7> :cprevious<Return>
+map <F8> :cnext<Return>
 autocmd Filetype java set makeprg=javac\ %
 set errorformat=%A%f:%l:\ %m,%-Z%p^,%-C%.%#
-map <F9> :make<Return>:copen<Return>
-map <F8> :cprevious<Return>
-map <F10> :cnext<Return>
 
 "
 "       Changes to plugs
@@ -128,10 +134,18 @@ set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 let g:syntastic_javascript_checkers=['jshint']
 
 
 " Give the ability to copy and paste using vim yank and paste
 set clipboard=unnamed
+
+
+
+" Make jedi-vim config
+let g:jedi#use_tabs_not_buffers = 1 " Make jedi-vim use tabs when going to a definition 
+let g:jedi#popup_select_first = 0
+
+
