@@ -72,6 +72,7 @@ ZSH_THEME="lambda"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     git
+    zsh-syntax-highlighting
     zsh-autosuggestions
     web-search
     dirhistory
